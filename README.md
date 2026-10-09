@@ -1,11 +1,7 @@
 # IoT-Based Smart Irrigation System 🌱
 
 <p align="center">
-  <img src="Image/project_thumbnail.png" alt="IoT-Based Smart Irrigation System using ATmega328P, ESP8266, and Blynk" width="100%">
-</p>
-
-<p align="center">
-  <b>Automated Irrigation | Soil Moisture Monitoring | Wi-Fi Connectivity | Remote Pump Control</b>
+  <img src="Image/project_thumbnail.png" alt="IoT-Based Smart Irrigation System" width="100%">
 </p>
 
 ## 📌 Project Overview
