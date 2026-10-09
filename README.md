@@ -1,246 +1,397 @@
-# IoT-Based Smart Irrigation System 🌱
+# 🌱 IoT-Based Smart Irrigation System
 
-<p align="center">
-  <img src="Image/project_thumbnail.png" alt="IoT-Based Smart Irrigation System" width="100%">
-</p>
+<img src="Image/project_thumbnail.png" alt="IoT-Based Smart Irrigation System" width="800">
 
 ## 📌 Project Overview
 
-The IoT-Based Smart Irrigation System is an embedded systems project designed to automate plant watering based on soil moisture levels.
+The **IoT-Based Smart Irrigation System** monitors soil moisture and controls a water pump automatically using an Arduino Uno. An ESP8266 NodeMCU provides Wi-Fi connectivity and enables remote monitoring and pump control through the Blynk IoT platform.
 
-The system uses an Arduino Uno based on the ATmega328P microcontroller to read analog soil moisture sensor data, process the readings, display the soil condition on a 16×2 LCD, and control a water pump through a relay module.
+The Arduino Uno reads the soil moisture sensor, displays readings on a 16x2 LCD, and controls the water pump through a relay module. The NodeMCU communicates with the Arduino using UART and connects to Blynk Cloud over Wi-Fi.
 
-An ESP8266 Wi-Fi module is intended to provide internet connectivity for sending sensor readings and pump status to Blynk IoT Cloud. Cloud monitoring and remote pump control require additional firmware implementation and testing.
+Users can monitor soil moisture readings and send pump control commands through the Blynk dashboard or mobile application.
 
-This project demonstrates embedded C/C++ programming, analog sensor interfacing, ADC, GPIO control, LCD interfacing, relay control, UART communication, and IoT connectivity.
-
-## 🎯 Project Objectives
-
-* Monitor soil moisture using an analog sensor.
-* Automate water pump operation based on soil moisture thresholds.
-* Display soil moisture readings and soil conditions on a 16×2 LCD.
-* Interface an ESP8266 Wi-Fi module with the Arduino Uno.
-* Extend the system with Blynk IoT Cloud monitoring.
-* Add remote pump control and automatic/manual operating modes.
-
-## 🛠️ Hardware Requirements
-
-| Component                   | Purpose                                     |
-| --------------------------- | ------------------------------------------- |
-| Arduino Uno (ATmega328P)    | Main microcontroller                        |
-| Soil Moisture Sensor        | Measures soil moisture                      |
-| 16×2 LCD                    | Displays sensor readings and soil condition |
-| Relay Module                | Switches the water pump                     |
-| Water Pump                  | Supplies water for irrigation               |
-| ESP8266 ESP-01              | Wi-Fi connectivity                          |
-| Regulated 3.3V Power Supply | Powers the ESP8266                          |
-| Suitable Pump Power Supply  | Powers the water pump                       |
-| Jumper Wires                | Electrical connections                      |
-| Breadboard                  | Circuit prototyping                         |
-
-## 💻 Software and Technologies
-
-* Embedded C/C++ for Arduino
-* Arduino IDE
-* ATmega328P Microcontroller
-* Analog-to-Digital Conversion (ADC)
-* General-Purpose Input/Output (GPIO)
-* LCD Interfacing
-* Relay Interfacing
-* UART Serial Communication
-* ESP8266 Wi-Fi Module
-* Blynk IoT Platform
-* AT Commands for ESP8266 communication
-
-## 🔌 Pin Connections
-
-### Arduino Uno Connections
-
-| Component            | Component Pin | Arduino Uno Pin                                |
-| -------------------- | ------------- | ---------------------------------------------- |
-| Soil Moisture Sensor | AO            | A0                                             |
-| LCD                  | RS            | D13                                            |
-| LCD                  | EN            | D12                                            |
-| LCD                  | D4            | D8                                             |
-| LCD                  | D5            | D9                                             |
-| LCD                  | D6            | D10                                            |
-| LCD                  | D7            | D11                                            |
-| Relay Module         | IN            | D7                                             |
-| ESP8266              | TX            | D2 (SoftwareSerial RX)                         |
-| ESP8266              | RX            | D3 (SoftwareSerial TX, through level shifting) |
-
-### ESP8266 ESP-01 Power Connections
-
-| ESP8266 Pin | Connection                                      |
-| ----------- | ----------------------------------------------- |
-| VCC         | Regulated 3.3V supply                           |
-| GND         | Common ground                                   |
-| EN/CH_PD    | 3.3V                                            |
-| RST         | 3.3V through an appropriate pull-up arrangement |
-| GPIO0       | HIGH during normal boot                         |
-| GPIO2       | HIGH during normal boot                         |
-
-**Important electrical precautions:**
-
-* The ESP8266 uses 3.3V logic.
-* Do not connect the Arduino Uno's 5V TX signal directly to the ESP8266 RX pin. Use a suitable logic-level shifter or voltage divider.
-* Use a regulated 3.3V supply capable of handling the ESP8266's current peaks.
-* Connect the Arduino and ESP8266 grounds together.
-* Confirm the ESP8266 module pinout before making connections.
-
-The ESP8266 connections above apply to the ESP-01 module. Other ESP8266 development boards may require different connections.
-
-## ⚙️ Working Principle
-
-### 1. Soil Moisture Sensing
-
-The soil moisture sensor produces an analog signal corresponding to the soil condition. The Arduino Uno reads the signal through analog pin A0 using its built-in ADC.
-
-The ATmega328P provides a 10-bit ADC, producing readings from 0 to 1023.
-
-### 2. Soil Condition Classification
-
-The sensor reading is compared against predefined thresholds to classify the soil condition.
-
-| Sensor Reading | Soil Condition   | Pump Action |
-| -------------- | ---------------- | ----------- |
-| 900–1023       | Dry Soil         | ON          |
-| 600–899        | Slightly Moist   | OFF         |
-| 300–599        | Wet Soil         | OFF         |
-| 0–299          | Very Wet / Water | OFF         |
-
-These are initial example thresholds. Actual readings depend on the sensor, soil type, and calibration. Adjust the thresholds according to real sensor measurements.
-
-### 3. Automatic Water Pump Control
-
-The Arduino processes the sensor reading and controls the relay module.
-
-* When the sensor reading reaches the configured dry-soil threshold, the pump is switched ON.
-* When the sensor reading falls below the dry-soil threshold, the pump is switched OFF.
-
-The relay provides a switching interface between the microcontroller and the pump circuit.
-
-**Safety:** Use an appropriately rated relay and a suitable power supply for the pump. Do not power the pump directly from an Arduino GPIO pin.
-
-### 4. LCD Display
-
-A 16×2 LCD displays the soil moisture reading and the corresponding soil condition or pump status.
-
-### 5. ESP8266 Wi-Fi Communication
-
-The ESP8266 can provide wireless connectivity to the system. The Arduino can communicate with the ESP8266 using UART serial communication.
-
-The ESP8266 must be configured with suitable firmware and network settings before it can exchange data with an IoT cloud platform.
-
-### 6. Blynk IoT Integration
-
-The planned Blynk integration can provide a mobile dashboard for displaying soil moisture readings and pump status.
-
-Remote pump operation requires cloud-to-device communication and firmware that processes remote commands. Automatic/manual mode selection also requires additional control logic.
-
-These functions must be implemented and tested before they can be considered operational.
-
-## 📊 System Architecture
-
-```text
-Soil Moisture Sensor
-        |
-        | Analog Signal
-        v
-   Arduino Uno
-    ATmega328P
-        |
-        +------------------+
-        |                  |
-        v                  v
-     16×2 LCD          Relay Module
-                            |
-                            v
-                        Water Pump
-
-   Arduino Uno
-        |
-        | UART
-        v
-     ESP8266
-        |
-        | Wi-Fi
-        v
-   Blynk IoT Cloud
-        |
-        v
-   Blynk Mobile App
-```
-
-The sensor, LCD, and relay are part of the basic Arduino control system. The cloud and mobile-app functions depend on completing the ESP8266 and Blynk firmware integration.
-
-## 🌐 Planned IoT Features
-
-The intended IoT implementation includes:
-
-* Live soil moisture monitoring.
-* Cloud-based display of soil condition.
-* Remote monitoring of pump status.
-* Automatic irrigation based on sensor readings.
-* Manual pump control through the Blynk application.
-* Automatic/manual operating mode selection.
-
-**Implementation status:** The original Arduino code implements soil moisture reading, LCD display, and automatic relay control. ESP8266 cloud communication, remote pump control, and automatic/manual mode selection require further implementation and testing.
-
-## 🧠 Embedded Systems Concepts Demonstrated
-
-* Analog sensor interfacing
-* ADC-based sensor measurement
-* Threshold-based decision-making
-* GPIO input and output control
-* Relay interfacing
-* LCD interfacing
-* UART serial communication
-* Microcontroller-based automation
-* Embedded firmware development
-* Wi-Fi and IoT integration concepts
-
-## 🚀 Future Improvements
-
-* Implement and verify reliable Blynk cloud communication.
-* Add remote pump control through the mobile application.
-* Implement automatic/manual operating modes.
-* Add Wi-Fi disconnection detection and reconnection.
-* Introduce hysteresis to reduce frequent pump switching near the threshold.
-* Add maximum pump-running time and dry-run protection.
-* Improve sensor calibration and moisture measurement accuracy.
-* Add temperature and humidity monitoring.
-* Add water tank level monitoring.
-* Introduce data logging and mobile notifications.
-* Explore solar-powered operation.
-
-## 🌱 Applications
-
-* Home gardens
-* Agricultural irrigation
-* Greenhouses
-* Plant nurseries
-* Small-scale farming
-* Automated plant watering systems
-
-## ✅ Advantages
-
-* Automates the irrigation process.
-* Reduces the need for continuous manual monitoring.
-* Helps reduce water wastage when properly calibrated.
-* Provides a foundation for IoT-based agricultural automation.
-* Can be extended with additional sensors and cloud services.
-
-## 👨‍💻 Author
-
-**Sabari**
-
-Embedded Systems / Firmware Engineer Fresher
-
-GitHub: [sabarikumar2004](https://github.com/sabarikumar2004)
-
-LinkedIn: [sabarikumar48](https://www.linkedin.com/in/sabarikumar48)
+**Project status:** The source code and integration design are prepared. Complete hardware, Wi-Fi, Blynk Cloud, and mobile app operation must be tested before all features can be marked as working.
 
 ---
 
-**Technologies:** Arduino Uno | ATmega328P | Embedded C/C++ | ADC | GPIO | LCD | Relay | ESP8266 | UART | Blynk IoT
+## ✨ Features
+
+* Soil moisture monitoring using an analog sensor
+* Automatic water pump control based on soil moisture readings
+* Real-time sensor reading display on a 16x2 LCD
+* Arduino Uno and ESP8266 NodeMCU integration
+* UART serial communication between the two microcontrollers
+* Wi-Fi connectivity using ESP8266
+* Blynk Cloud integration for remote monitoring
+* Manual pump ON/OFF commands through Blynk
+* Automatic irrigation mode selection
+* Separate code for Arduino Uno and ESP8266 NodeMCU
+
+---
+
+## 🛠️ Hardware Components
+
+| S.No. | Component             | Purpose                             |
+| ----- | --------------------- | ----------------------------------- |
+| 1     | Arduino Uno           | Sensor reading and pump control     |
+| 2     | ESP8266 NodeMCU       | Wi-Fi and Blynk Cloud connectivity  |
+| 3     | Soil moisture sensor  | Measures soil moisture level        |
+| 4     | 16x2 LCD              | Displays sensor readings and status |
+| 5     | Relay module          | Controls the pump switching circuit |
+| 6     | Water pump            | Supplies water to the plants        |
+| 7     | Jumper wires          | Hardware connections                |
+| 8     | USB cables            | Programming and powering the boards |
+| 9     | Suitable power supply | Supplies power to the system        |
+
+---
+
+## 💻 Software and Tools
+
+* Arduino IDE
+* Arduino AVR Boards package
+* ESP8266 board package
+* LiquidCrystal library
+* SoftwareSerial library
+* Blynk library
+* ESP8266WiFi library
+* Blynk IoT Cloud
+* Blynk mobile application
+
+---
+
+## 🏗️ System Architecture
+
+The project uses two microcontrollers, each with a separate responsibility.
+
+### 1. Arduino Uno
+
+The Arduino Uno performs the main irrigation control functions:
+
+* Reads the analog soil moisture sensor through pin A0.
+* Displays the soil reading and status on the LCD.
+* Controls the relay connected to digital pin D7.
+* Automatically controls the pump using a soil reading threshold.
+* Sends soil readings to the NodeMCU through UART.
+* Receives manual pump commands and automatic mode commands from the NodeMCU.
+
+### 2. ESP8266 NodeMCU
+
+The ESP8266 NodeMCU provides IoT connectivity:
+
+* Connects to a Wi-Fi network.
+* Connects to Blynk Cloud.
+* Receives soil readings from the Arduino Uno.
+* Sends sensor readings to the Blynk dashboard.
+* Receives remote pump control commands from Blynk.
+* Forwards pump commands to the Arduino Uno through UART.
+
+### 3. Blynk Cloud and Mobile Application
+
+Blynk provides the remote monitoring and control interface.
+
+* Displays soil moisture readings.
+* Provides a manual pump ON/OFF control.
+* Provides a command to return the system to automatic mode.
+
+These functions require successful configuration and testing of the NodeMCU, Wi-Fi connection, Blynk Cloud, and mobile application.
+
+---
+
+## 📂 Project Folder Structure
+
+```text
+IoT-Smart-Irrigation-System/
+│
+├── Arduino_Uno/
+│   └── Smart_Irrigation_Arduino.ino
+│
+├── ESP8266_Node_mcu/
+│   └── ESP8266_Node_mcu.ino
+│
+├── Image/
+│   └── project_thumbnail.png
+│
+└── README.md
+```
+
+---
+
+## 🔌 Hardware Connections
+
+### 1. Soil Moisture Sensor to Arduino Uno
+
+| Soil Sensor Pin    | Arduino Uno                                   |
+| ------------------ | --------------------------------------------- |
+| Analog Output (AO) | A0                                            |
+| VCC                | According to the sensor module specifications |
+| GND                | GND                                           |
+
+The Arduino reads the analog output using `analogRead(A0)`. The ADC reading ranges from 0 to 1023.
+
+### 2. 16x2 LCD to Arduino Uno
+
+The LCD uses the following pin configuration in the Arduino code.
+
+| LCD Signal | Arduino Uno Pin |
+| ---------- | --------------- |
+| RS         | D13             |
+| EN         | D12             |
+| D4         | D8              |
+| D5         | D9              |
+| D6         | D10             |
+| D7         | D11             |
+
+Connect LCD power, ground, and contrast according to the LCD module requirements.
+
+### 3. Relay Module to Arduino Uno
+
+| Relay Connection | Arduino Uno                                  |
+| ---------------- | -------------------------------------------- |
+| Control input    | D7                                           |
+| GND              | GND                                          |
+| VCC              | According to the relay module specifications |
+
+The Arduino sends a control signal to the relay module to switch the pump.
+
+**Safety:** Verify whether the relay module is active-HIGH or active-LOW before connecting the pump. The current Arduino code assumes active-HIGH operation. Test the relay with the actual pump disconnected first.
+
+### 4. Arduino Uno to ESP8266 NodeMCU — UART
+
+| Arduino Uno | ESP8266 NodeMCU                                                    | Purpose                                  |
+| ----------- | ------------------------------------------------------------------ | ---------------------------------------- |
+| D2 (RX)     | D7 / GPIO13 (TX)                                                   | NodeMCU sends commands to Arduino        |
+| D3 (TX)     | D6 / GPIO12 (RX), through a voltage divider or logic-level shifter | Arduino sends sensor readings to NodeMCU |
+| GND         | GND                                                                | Common ground                            |
+
+**Important voltage warning:** The Arduino Uno uses 5 V logic, while the ESP8266 uses 3.3 V logic. Never connect Arduino D3 directly to NodeMCU D6. Use a suitable voltage divider or logic-level shifter.
+
+Power the NodeMCU through USB or an appropriate regulated power supply. Connect the grounds of both boards together.
+
+---
+
+## ⚙️ Automatic Irrigation Logic
+
+The Arduino reads the soil moisture sensor and compares the reading with a threshold.
+
+The current code uses a threshold of **900**.
+
+| Soil Sensor Reading | Automatic Pump Action |
+| ------------------- | --------------------- |
+| 900–1023            | Pump ON               |
+| 0–899               | Pump OFF              |
+
+The logic assumes that higher sensor readings indicate drier soil. Actual sensor readings depend on the sensor type, soil conditions, and calibration.
+
+**Note:** Calibrate the sensor before using the system with plants. Do not assume that the threshold of 900 is suitable for every sensor.
+
+---
+
+## 🔄 UART Communication Protocol
+
+The Arduino Uno and NodeMCU exchange simple text messages at **9600 baud**.
+
+### Arduino Uno to NodeMCU
+
+Example message:
+
+```text
+SOIL:850
+```
+
+The number represents the analog soil moisture sensor reading.
+
+The Arduino sends the reading approximately once per second.
+
+### NodeMCU to Arduino Uno
+
+| UART Message | Function                               |
+| ------------ | -------------------------------------- |
+| `PUMP_ON`    | Requests manual pump ON                |
+| `PUMP_OFF`   | Requests manual pump OFF               |
+| `AUTO`       | Returns pump control to automatic mode |
+
+The Arduino receives these messages and updates its pump control mode.
+
+---
+
+## ☁️ Blynk Cloud Configuration
+
+Blynk Cloud provides the online dashboard and communication between the NodeMCU and the remote user interface.
+
+### Template Configuration
+
+Create a template in Blynk Console with these settings:
+
+| Setting       | Value                   |
+| ------------- | ----------------------- |
+| Template Name | Smart Irrigation System |
+| Hardware      | ESP8266                 |
+| Connectivity  | Wi-Fi                   |
+
+### Virtual Datastreams
+
+Create the following virtual datastreams:
+
+| Virtual Pin | Data Type | Minimum | Maximum | Purpose                |
+| ----------- | --------- | ------: | ------: | ---------------------- |
+| V0          | Integer   |       0 |    1023 | Soil moisture reading  |
+| V1          | Integer   |       0 |       1 | Manual pump control    |
+| V2          | Integer   |       0 |       1 | Automatic mode command |
+
+### Dashboard Widgets
+
+Configure the dashboard with these widgets:
+
+* **Value Display:** Connected to V0 to show the soil sensor reading.
+* **Switch:** Connected to V1 to send manual pump ON/OFF commands.
+* **Button or Switch:** Connected to V2 to send the automatic mode command.
+
+Configure V1 to send `0` when OFF and `1` when ON.
+
+When V2 sends `1`, the NodeMCU sends the `AUTO` command to the Arduino. The Arduino then returns to automatic pump control based on the soil moisture threshold.
+
+Official Blynk documentation: https://docs.blynk.io/
+
+---
+
+## 📱 Blynk Mobile Application
+
+The Blynk IoT mobile application can provide remote monitoring and control after the device and dashboard have been configured.
+
+### Mobile App Functions
+
+* View the soil moisture sensor reading.
+* Send a manual pump ON command.
+* Send a manual pump OFF command.
+* Return the system to automatic irrigation mode.
+
+### Mobile App Setup
+
+1. Install the official Blynk IoT mobile application.
+2. Sign in using the same account used for Blynk Cloud.
+3. Open the Smart Irrigation System device.
+4. Open the device dashboard.
+5. View the soil moisture reading and use the configured pump control widgets.
+
+**Note:** Mobile control requires the NodeMCU to be connected to Wi-Fi and Blynk Cloud, and the UART connection to the Arduino must be working correctly.
+
+---
+
+## 🚀 Installation and Setup
+
+### Step 1: Install Arduino IDE
+
+Install Arduino IDE on your computer.
+
+### Step 2: Install the ESP8266 Board Package
+
+In Arduino IDE, open Boards Manager and install the ESP8266 board package.
+
+Select the appropriate NodeMCU ESP8266 board under **Tools → Board**.
+
+### Step 3: Install the Blynk Library
+
+Open **Sketch → Include Library → Manage Libraries**.
+
+Search for `Blynk` and install the Blynk library.
+
+### Step 4: Configure Blynk
+
+Create the Smart Irrigation System template and configure virtual datastreams V0, V1, and V2 as described above.
+
+Obtain the Template ID and Auth Token for your device.
+
+### Step 5: Configure NodeMCU Credentials
+
+Open:
+
+`ESP8266_Node_mcu/ESP8266_Node_mcu.ino`
+
+Enter your own Wi-Fi and Blynk credentials in the appropriate fields.
+
+**Security:** Do not publish your actual Wi-Fi password or Blynk Auth Token in a public GitHub repository. Keep private credentials out of committed source code.
+
+### Step 6: Upload Arduino Uno Code
+
+Open:
+
+`Arduino_Uno/Smart_Irrigation_Arduino.ino`
+
+Select Arduino Uno in Arduino IDE and upload the sketch.
+
+### Step 7: Upload NodeMCU Code
+
+Open:
+
+`ESP8266_Node_mcu/ESP8266_Node_mcu.ino`
+
+Select the appropriate NodeMCU board and port, then upload the sketch.
+
+### Step 8: Connect the Hardware
+
+Connect the soil sensor, LCD, relay module, and UART wires according to the connection tables above.
+
+Check the voltage levels and common ground before powering the boards.
+
+### Step 9: Test the Complete System
+
+Test the soil sensor readings, LCD display, relay operation, UART communication, Wi-Fi connection, Blynk dashboard, and manual and automatic pump controls.
+
+---
+
+## 🧪 Testing Checklist
+
+Use this checklist when testing the complete project.
+
+* [ ] Soil moisture sensor produces readings.
+* [ ] LCD displays the sensor reading.
+* [ ] Relay responds to automatic pump control.
+* [ ] Arduino Uno and NodeMCU communicate through UART.
+* [ ] NodeMCU connects to Wi-Fi.
+* [ ] NodeMCU connects to Blynk Cloud.
+* [ ] Soil readings appear in the Blynk dashboard.
+* [ ] Manual pump ON command works.
+* [ ] Manual pump OFF command works.
+* [ ] Automatic mode works after sending the `AUTO` command.
+* [ ] Mobile app controls work as expected.
+* [ ] Relay and pump power connections have been checked safely.
+
+---
+
+## 🔐 Safety and Security
+
+* Never connect Arduino Uno's 5 V TX signal directly to ESP8266 RX.
+* Use a suitable voltage divider or logic-level shifter for UART signals from Arduino to NodeMCU.
+* Verify the relay module's active-HIGH or active-LOW behavior.
+* Test relay operation with the pump disconnected before connecting the pump power supply.
+* Use an appropriate power supply for the pump and microcontrollers.
+* Do not publish Wi-Fi passwords or Blynk Auth Tokens in a public repository.
+
+---
+
+## 🔮 Future Improvements
+
+* Calibrate soil moisture thresholds for different soil conditions.
+* Add temperature and humidity monitoring.
+* Add pump status feedback to the dashboard.
+* Improve Wi-Fi reconnection handling.
+* Add low-water-level detection.
+* Add notifications when the soil becomes dry.
+* Improve the mobile dashboard with additional sensor information.
+
+---
+
+## 👨‍💻 Author
+
+**K Sabari**
+
+* GitHub: https://github.com/sabarikumar2004
+* LinkedIn: https://www.linkedin.com/in/sabarikumar48
+
+---
+
+## 📌 Project Status
+
+The project source code and integration design are prepared for Arduino Uno, ESP8266 NodeMCU, UART communication, and Blynk IoT.
+
+The complete system should be considered operational only after the hardware, Wi-Fi connection, Blynk Cloud, mobile app, and pump controls have been tested successfully.
